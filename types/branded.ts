@@ -10,3 +10,14 @@ export type HttpResponseStatusCode = Branded<number, 'HttpResponseStatusCode'>;
 // Types business
 export type TypeVoyage = Branded<number, "Code type voyage">;
 export type AgeEnfants = Branded<number, "Age enfant">; 
+
+// Type product
+interface Produit {
+    codeProduct: CodeProduct,
+    duration?: Duration,
+    libelle?: Libelle
+}
+
+export type CodeProduct = Brand<string, "codeProduct">;
+type Duration = Brand<number, "duration">;
+type Libelle = Brand<string, "libelle">;
