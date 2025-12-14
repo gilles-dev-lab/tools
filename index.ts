@@ -12,6 +12,21 @@ function canDisplayDiscount(age: number): boolean {
     return false;
 }
 
+// Intl format
+const items1 = ["Pencils", "Pens"];
+const items2 = ["Apples", "Bananas", "Oranges"];
+
+// Type: Disjunction (The 'or' behavior)
+const disjunctionFormatter = new Intl.ListFormat("fr", { type: "disjunction" });
+
+console.log(disjunctionFormatter.format(items1));
+// Output: "Pencils ou Pens"
+
+const formatterFr = new Intl.ListFormat("fr");
+console.log(formatterFr.format(items2));
+// Output: "Apples, Bananas et Oranges"
+
+
 // Symbol testing
 const price = {
   amount: 99.99,
