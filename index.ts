@@ -1,5 +1,167 @@
 import { checkAgeEnfant } as Validators from '../validators/age';
 
+
+/* ------------- */
+/*
+ui :
+- plier/déplier
+- carousel
+- carte
+- widgets
+index/directeur :
+- quand charger quoi
+intersection observer :
+- load image circuit si visible
+- innerHtml si visible (filtre+tri+paginated)
+observer :
+- filtred, sorted, paginated
+> Method(type X, data) > class dispatcheur + spécificité task
+
+flowchart TD
+  %% --- UI ----------------------------------------------------------
+  UI[**UI Layer**] --> Fold[« Plier / Déplier »]
+  UI --> Car[« Carousel »]
+  UI --> Card[« Carte »]
+  UI --> Widget[« Widgets »]
+
+  %% --- Découverte et chargement ------------------------------------
+  UI --> Dir[**Index / Directeur**]
+  Dir -->|« Détermine ce qui doit être chargé »| Loader[« Chargeur »]
+  Loader -->|fetch‑prod‑list| Store[« Store / état global »]
+
+  %% --- Observateurs -----------------------------------------------
+  Store --> IntObs{IntersectionObserver}
+  IntObs -->|visible| ImgLoad[« Charge image »]
+  IntObs -->|visible| InnerHtml[« Mettre innerHTML (filtre+tri+page) »]
+
+  %% --- Observateur de l’état (tri, filtre, pagination) ----------
+  Store --> Obs{Observateur d’état}
+  Obs -->|événement : filtrés, triés, paginés| Disp[« Dispatcher »]
+  Disp -->|Method(type,X,data) : tâches spécifiques| Task[« Tâche »]
+
+  %% --- Flow de données --------------------------------------------
+  subgraph Backend
+    fetchProducts[fetch("/api/products")] -->|JSON| Store
+  end
+
+
+scss : card / contain layout
+*/
+
+
+// eventBus.js
+class EventBus {
+  private listeners: {}// EventListener{}
+  constructor() {
+    this.listeners = {}; // { eventName: Set<callback> }
+  }
+
+  on(event: Event, callback: FunctionStringCallback) {
+    if (!this.listeners[event]) this.listeners[event] = new Set();
+    this.listeners[event].add(callback);
+  }
+
+  off(event, callback) {
+    if (!this.listeners[event]) return;
+    this.listeners[event].delete(callback);
+    if (this.listeners[event].size === 0) delete this.listeners[event];
+  }
+
+  emit(event, payload) {
+    if (!this.listeners[event]) return;
+    // clones the set to avoid mutation during iteration
+    for (const cb of [...this.listeners[event]]) cb(payload);
+  }
+}
+
+/*
+ui :
+- plier/déplier
+- carousel
+- carte
+- widgets
+index/directeur :
+- quand charger quoi
+intersection observer :
+- load image circuit si visible
+- innerHtml si visible (filtre+tri+paginated)
+observer :
+- filtred, sorted, paginated
+> Method(type X, data) > class dispatcheur + spécificité task
+ */
+interface Mediator {
+    notify(sender: object, event: string): void;
+}
+
+class AppMediator implements Mediator {
+    private uiComponents: UiComponents = new UiComponents();
+    private observer: Observer = new Observer;
+    //private IntersectionObserver: IntersectionObserver;
+
+    constructor() {
+        this.uiComponents.setMediator(this);
+        this.observer.setMediator(this);
+    }
+
+    public notify(sender: object, event: string): void {
+
+        const cases = [
+            "toggleText"
+        ]
+        if (event === 'toggleText') {
+            console.log('Mediator reacts on A and triggers following operations:');
+            this.uiComponents.doC();
+        }
+
+        if (event === 'D') {
+            console.log('Mediator reacts on D and triggers following operations:');
+            this.component1.doB();
+            this.observer.doC();
+        }
+    }
+}
+
+class BaseComponent {
+    protected mediator: Mediator;
+
+    constructor(mediator?: Mediator) {
+        this.mediator = mediator!;
+    }
+
+    public setMediator(mediator: Mediator): void {
+        this.mediator = mediator;
+    }
+}
+
+class UiComponents extends BaseComponent {
+    public ToggleText(): void {
+        console.log('Component 1 does A.');
+        this.mediator.notify(this, 'toggleText');
+    }
+
+    public Carousel(): void {
+        console.log('Component 1 does B.');
+        this.mediator.notify(this, 'B');
+    }
+    public async CarteComponent(): Promise<void> {
+        const cartesManager = await import('../ui/CartesUi');
+        new cartesManager();
+    }
+}
+
+class Observer extends BaseComponent {
+    public doC(): void {
+        console.log('Component 2 does C.');
+        this.mediator.notify(this, 'C');
+    }
+
+    public doD(): void {
+        console.log('Component 2 does D.');
+        this.mediator.notify(this, 'D');
+    }
+}
+/* ------------- */
+
 function processChildData(age: number) {
     Validators.checkAgeEnfant(age); 
     console.log(`Traitement pour un enfant de ${age} ans.`);
