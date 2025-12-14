@@ -21,3 +21,7 @@ export interface Produit {
 export type CodeProduct = Brand<string, "codeProduct">;
 type Duration = Brand<number, "duration">;
 type Libelle = Brand<string, "libelle">;
+
+export type CarteExistenceMap = {
+    [code: CodeProduct]: boolean;
+};
