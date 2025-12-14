@@ -1,6 +1,6 @@
 import {querySelectorAssert} from '../validators/dom';
 import {assertIsCodeProductValide} from '../validators/products';
-import { zoomServiceInstance } from 'ZoomService';
+import { zoomServiceInstance } from '../services/ZoomService';
 import {CodeProduct, Produit} from '../types/branded';
 
 const existenceCache = new Map<CodeProduct, boolean>();
