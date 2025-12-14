@@ -12,7 +12,7 @@ export type TypeVoyage = Branded<number, "Code type voyage">;
 export type AgeEnfants = Branded<number, "Age enfant">; 
 
 // Type product
-interface Produit {
+export interface Produit {
     codeProduct: CodeProduct,
     duration?: Duration,
     libelle?: Libelle
