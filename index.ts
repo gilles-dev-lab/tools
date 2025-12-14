@@ -89,18 +89,39 @@ observer :
 - filtred, sorted, paginated
 > Method(type X, data) > class dispatcheur + spécificité task
  */
+
+// index.ts
+//import { UiComponents } from './ui-components';
+//import { Observer } from './observer';
+//import { AppMediator } from './app-mediator';
+
+export class Index {
+  private uiComponents: UiComponents;
+  private observer: Observer;
+  private mediator: AppMediator;
+
+  constructor() {
+    this.uiComponents = new UiComponents();
+    this.observer = new Observer();
+    this.mediator = new AppMediator(this.uiComponents, this.observer);
+  }
+}
+/* ===== */
 interface Mediator {
     notify(sender: object, event: string): void;
 }
 
 class AppMediator implements Mediator {
-    private uiComponents: UiComponents = new UiComponents();
-    private observer: Observer = new Observer;
-    //private IntersectionObserver: IntersectionObserver;
+    private uiComponents: UiComponents;
+    private observer: Observer;
+    private intersectionObserver: IntersectionObserver;
 
-    constructor() {
+    constructor(uiComponents: UiComponents, observer: Observer) {
+        this.uiComponents = uiComponents;
+        this.observer = observer;
         this.uiComponents.setMediator(this);
         this.observer.setMediator(this);
+        this.intersectionObserver = new IntersectionObserver(this.handleIntersection.bind(this));
     }
 
     public notify(sender: object, event: string): void {
@@ -110,7 +131,7 @@ class AppMediator implements Mediator {
         ]
         if (event === 'toggleText') {
             console.log('Mediator reacts on A and triggers following operations:');
-            this.uiComponents.doC();
+            this.uiComponents.ToggleText();
         }
 
         if (event === 'D') {
