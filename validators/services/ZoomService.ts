@@ -3,15 +3,14 @@ import { zoom } from '../lib/zoom.vanilla';
 export class ZoomService {
 
   showImagePopup(path: string): void {
-    console.log(`ZoomService: Tentative d'affichage pour le code : ${path}`);
+    console.log(`ZoomService: Tentative d'affichage pour l'image : ${path}`);
 
-    // Exemple d'appel à la librairie externe :
+    // !Todo adapter :
     zoom.open({
-        productCode: code,
+        path: path,
         // ... autres options
     });
   }
 }
 
-// Pour une utilisation facile, vous pouvez aussi exporter une instance singleton :
 export const zoomServiceInstance = new ZoomService();
